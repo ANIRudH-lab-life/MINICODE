@@ -12,6 +12,22 @@ from datetime import datetime
 from prompt_toolkit import Application
 from prompt_toolkit import print_formatted_text as print , HTML
 from xml.sax.saxutils import escape
+from prompt_toolkit.styles import Style
+from prompt_toolkit.cursor_shapes import CursorShape, ModalCursorShapeConfig
+from prompt_toolkit.shortcuts import yes_no_dialog
+
+def bottom_toolbar():
+    print("\n")
+    return HTML("""<style bg="beige" fg="Black"></style>Context Used!""")
+
+style = Style.from_dict(
+    {
+        "": "Peru",
+        'dialog': 'bg:Moccasin',
+        'dialog frame.label': 'bg:Beige #000000',
+        'dialog.body': 'bg:SlateGrey Peru'
+    }
+)
 
 app = Application(full_screen=True)
 app.run()
@@ -95,16 +111,22 @@ client = OpenAI(
 model = config.get("model", "qwen2.5:1.5b")
 
 def run_command(command):
-    print(HTML(f"""
-<aaa bg="Beige" fg="Black">The command {command} was called</aaa>
+    result_yes_no=yes_no_dialog(
+        style=style,
+        title='Yes/No dialog example',
+        text=HTML(f"""
+<aaa bg="Beige" fg="Black">The command {command} will be called</aaa>
     
-"""))
-    result = subprocess.run(command, shell = True, capture_output = True, text = True)
-    return json.dumps({
-        "stdout": result.stdout,
-        "stderr": result.stderr,
-        "returncode": result.returncode
-    })
+""")).run()
+    if result_yes_no == True:
+        result = subprocess.run(command, shell = True, capture_output = True, text = True)
+        return json.dumps({
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "returncode": result.returncode
+        })
+    elif result_yes_no == False:
+        return "You have not been allowed to call this command inform the user about this and tell them if they wish to run the command they will have to approve the command. If they tell you try again call the command again if they approve it on their end it will work."
 
 
 def web_search(query):
@@ -134,17 +156,23 @@ def web_search_trimmer(webResults):
     return query_results
 
 def write_file(path, content):
-    print(HTML(f"""
-<aaa bg="Beige" fg="Black">The file {path} was edited with this code {content}</aaa>
+    result_yes_no = yes_no_dialog(
+        style=style,
+        title='Yes/No dialog example',
+        text=HTML(f"""
+<aaa bg="Beige" fg="Black">The file {path} will be edited with this code {content}</aaa>
 
-"""))
-    try:
-        with open(path, 'w') as f:
-            f.write(content)
-        return {"success": True, "resolved_path": path}
-    except Exception as e:
-        return {"error": str(e)}
-    
+""")).run()
+
+    if result_yes_no == True:
+        try:
+            with open(path, 'w') as f:
+               f.write(content)
+            return {"success": True, "resolved_path": path}
+        except Exception as e:
+            return {"error": str(e)}
+    elif result_yes_no == False:
+        return "You have not been allowed to edit this file explain to the user the reason behind editing the file and then ask them to approve it next time. If they tell you try again call the command again if they approve it on their end it will work."
 
 tools = [
     {
@@ -227,7 +255,7 @@ while session_ended == False:
     try:
         prompt = pt_prompt("""
     
->>> """)
+>>> """, style=style, cursor=CursorShape.BLINKING_UNDERLINE, bottom_toolbar=bottom_toolbar)
 
         if prompt == '/quit':
             session_ended = True

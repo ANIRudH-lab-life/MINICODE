@@ -1,5 +1,5 @@
 {
-    "model": "qwen3:1.7B",
-    "base_url": "http:localhost:11434",
-    "api_key": ""
+    "model": "qwen3:1.7b",
+    "base_url": "http://127.0.0.1:11434/v1",
+    "api_key": "ollama"
 }
