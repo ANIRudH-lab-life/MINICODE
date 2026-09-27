@@ -9,6 +9,12 @@ import sys
 import warnings
 from prompt_toolkit import prompt as pt_prompt
 from datetime import datetime
+from prompt_toolkit import Application
+from prompt_toolkit import print_formatted_text as print , HTML
+from xml.sax.saxutils import escape
+
+app = Application(full_screen=True)
+app.run()
 
 
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
@@ -75,6 +81,8 @@ this is only at the start you will have to remember which directories you have s
 
 You Are on a linux environment
 
+the current date is {datetime.now()}
+
 
 """
 memory.append({"role": "system", "content": system_prompt})
@@ -87,10 +95,10 @@ client = OpenAI(
 model = config.get("model", "qwen2.5:1.5b")
 
 def run_command(command):
-    print(f"""
-The command {command} was called
+    print(HTML(f"""
+<aaa bg="Beige" fg="Black">The command {command} was called</aaa>
     
-""")
+"""))
     result = subprocess.run(command, shell = True, capture_output = True, text = True)
     return json.dumps({
         "stdout": result.stdout,
@@ -100,10 +108,11 @@ The command {command} was called
 
 
 def web_search(query):
-    print(f"""
-The query {query} was called
+    print(HTML(f"""
+<aaa bg="Beige" fg="Black">  The query {query} was called</aaa>
 
-""")
+"""))
+
     api_key = os.environ.get("TAVILY_API_KEY")
     web_results = requests.post(
         "https://api.tavily.com/search",
@@ -125,10 +134,10 @@ def web_search_trimmer(webResults):
     return query_results
 
 def write_file(path, content):
-    print(f"""
-The file {path} was edited with this code {content}
+    print(HTML(f"""
+<aaa bg="Beige" fg="Black">The file {path} was edited with this code {content}</aaa>
 
-""")
+"""))
     try:
         with open(path, 'w') as f:
             f.write(content)
@@ -302,12 +311,12 @@ while session_ended == False:
             delta = choice.delta
 
             if delta.content:
-                print(delta.content, end="", flush=True)
+                
                 full_content += delta.content
 
             if hasattr(delta, 'reasoning') and delta.reasoning:
                 full_thinking += delta.reasoning
-                print(delta.reasoning, end="", flush=True)
+                print(HTML(f"<SlateGrey><i>{escape(delta.reasoning)}</i></SlateGrey>"), end="", flush=True)
 
             if delta.tool_calls:
                 for tc in delta.tool_calls:
@@ -356,7 +365,7 @@ while session_ended == False:
 
                 elif name == "finish":
                     final_answer = args.get("finalAnswer", "")
-                    print("Final Answer:", final_answer)
+                    print(HTML(f'<aaa bg="Beige">"Final Answer:", {final_answer}</aaa>'))
                     agent_finished = True
                     memory.append({"role": "tool", "tool_call_id": str(tool_call.id), "content": "task completed successfully"})
                     break
@@ -369,7 +378,7 @@ while session_ended == False:
             agent_finished = True
 
     if reply.content:
-        print("\nFinal Response:", reply.content)
+        print(HTML(f'<aaa fg="Moccasin">\n {reply.content}</aaa>'))
 
 
 sys.exit()
