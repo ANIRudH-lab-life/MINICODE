@@ -1,5 +1,5 @@
 {
-    "model": "unsloth/Qwen3-1.7B-GGUF",
-    "base_url": "http://192.168.0.250:8888/v1",
-    "api_key": "sk-unsloth-01a301aef235b87bb79153696c291057"
+    "model": "qwen3:1.7B",
+    "base_url": "http:localhost:11434",
+    "api_key": ""
 }
