@@ -15,17 +15,19 @@ from xml.sax.saxutils import escape
 from prompt_toolkit.styles import Style
 from prompt_toolkit.cursor_shapes import CursorShape, ModalCursorShapeConfig
 from prompt_toolkit.shortcuts import yes_no_dialog
+from prompt_toolkit.shortcuts import message_dialog
 
 def bottom_toolbar():
-    print("\n")
     return HTML("""<style bg="beige" fg="Black"></style>Context Used!""")
 
 style = Style.from_dict(
     {
         "": "Peru",
-        'dialog': 'bg:Moccasin',
-        'dialog frame.label': 'bg:Beige #000000',
-        'dialog.body': 'bg:SlateGrey Peru'
+        'dialog': 'bg:Black',
+        'dialog frame.label': 'bg:Black #000000',
+        'dialog.body': 'bg:Black Black',
+        'dialog shadow': 'bg: Black',
+        'button': 'bg: Black'
     }
 )
 
@@ -44,32 +46,22 @@ load_dotenv()
 
 memory = []
 
-print(r"""
+message_dialog(
+    title='WELCOME',
+    text=HTML(r"""
 
-
-         .......               .....         
-       //.....\\ .........  //....:\       __  __ ___ _  _ ___ ___ ___  ___  ___ 
-       `::....\\./.......\\///....::\      |  \/  |_ _| \| |_ _|  _/ _ \|   \| __|
-      `::`/.##-::::::::::::::-`#.\`::`     | |\/| || || .` || || || (_) | |) | _| 
-      `::`\//.::::::::::::::::\\.//::`     |_|  |_|___|_|\_|___|___\___/|___/|___|
-       `::\.::::::::::::::::::::..::`       
-       `-::::::::::::::::::::::::::-`       
-      `/:::::::: :::::::::: ::::::::\`      
-      ``:::::::\./...==...\./:::::::``      
-      ``::::::=.....`/.`/....=::::::``      
-      ``:::::::`/###`` ``##\``::::::``      
-      `\::::::``####\../####``::::::``      
-       \\:::::`\\##########//`::::::/`      
-        \\:::::\\..........//:::::-//       
-         \\-::::\..........:::::://         
-          .\\..::::::::::::::..//           
-             ..\\..........//..             
-                ............        
-        
+⠀⠀⠀⠀⠀⠀⠀⢀⡖⣲⣄⣀⣀⣔⡲⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠈⡎⠁⠀⠀⠀⠀⠹⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣴⠃⠘⣣⣶⣶⠃⠀⢳⠀⠀⡴⠶⢤⠀⢀⡴⠶⣦⢠⠶⠶⣦⣴⠶⢦⠀⠀⢠⠶⢦⣠⠶⠶⣦⠀⣠⠶⠶⠶⠶⣄⠀⣠⠶⠶⠶⠶⣄⠀⢠⠶⠶⠶⠶⣄⠀⢠⠶⠶⠶⠶⠶⡄⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢠⠟⠷⢦⠍⠉⠉⠤⠶⡇⠀⠀⡇⠀⠈⠷⠞⠁⠀⣽⠘⡆⢰⠋⣿⠀⠈⠳⡀⢸⠀⢸⠙⡆⠠⡏⢰⠋⣠⠖⠒⣦⣼⣶⠁⢠⡶⠶⢤⠈⣷⣾⠀⣴⠒⢦⠈⢣⣸⠀⣰⣒⠒⠒⠁⠀⠀⠀
+⠀⠀⠀⠀⠀⡰⠋⠀⣄⠀⠀⡀⠀⠀⠀⢳⡀⠀⡇⠀⡶⣄⣠⢶⠀⣾⠀⡇⢸⠀⣿⠀⢰⣆⠹⣽⠂⢸⠀⡇⠀⡇⢸⠰⣿⠀⠀⠀⠀⢸⠀⢸⠀⠀⢸⠀⣿⣿⠀⡇⠀⢸⠀⢸⢻⠀⢈⣉⣉⡇⠀⠀⠀⠀
+⠀⠀⠀⢠⠞⠀⣸⢿⣻⡀⠀⢳⡴⠀⠀⡿⢷⣤⡇⠀⡇⠈⠁⣸⠀⢿⣀⡇⢸⣀⣿⠀⢸⠈⢧⠈⠀⢸⢀⡇⠀⣇⠺⡀⠻⠤⠤⠖⢲⠾⡀⠘⠦⠤⠞⢀⡿⢿⠀⠧⠤⠞⢀⡸⢸⠄⠸⠥⠤⠤⡀⠀⠀⠀
+⠀⠀⠀⠘⣤⢸⣥⣤⡏⣧⣤⣼⡇⣤⣼⣥⣤⡟⠧⠤⠇⠀⠀⠳⠤⠼⠻⠤⠤⠟⠻⠤⠼⠀⠀⠳⠤⠼⠸⠤⠤⠞⠀⠙⠦⠤⠤⠤⠋⠀⠙⠦⠤⠤⠤⠎⠀⠸⠤⠤⠤⠤⠞⠀⠸⠤⠤⠤⠤⠤⠃⠀⠀⠀
+⠀⠀⠀⠀⠀⠉⠉⠉⠈⠉⠉⠉⠉⠉⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
                                             
-                                            
+"""),
+style=style).run()
 
-""")
 
 system_prompt = f""" 
 
@@ -255,7 +247,7 @@ while session_ended == False:
     try:
         prompt = pt_prompt("""
     
->>> """, style=style, cursor=CursorShape.BLINKING_UNDERLINE, bottom_toolbar=bottom_toolbar)
+>>> """, style=style, cursor=CursorShape.BLINKING_UNDERLINE)
 
         if prompt == '/quit':
             session_ended = True
@@ -393,7 +385,7 @@ while session_ended == False:
 
                 elif name == "finish":
                     final_answer = args.get("finalAnswer", "")
-                    print(HTML(f'<aaa bg="Beige">"Final Answer:", {final_answer}</aaa>'))
+                    print(HTML(f'<aaa fg="Moccasin">\n{final_answer}</aaa>'))
                     agent_finished = True
                     memory.append({"role": "tool", "tool_call_id": str(tool_call.id), "content": "task completed successfully"})
                     break
