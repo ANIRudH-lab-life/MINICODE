@@ -16,6 +16,9 @@ from prompt_toolkit.styles import Style
 from prompt_toolkit.cursor_shapes import CursorShape, ModalCursorShapeConfig
 from prompt_toolkit.shortcuts import yes_no_dialog
 from prompt_toolkit.shortcuts import message_dialog
+from prompt_toolkit.completion import WordCompleter
+
+command_completer = WordCompleter(["/memory", "/quit"])
 
 def bottom_toolbar():
     return HTML("""<style bg="beige" fg="Black"></style>Context Used!""")
@@ -30,9 +33,6 @@ style = Style.from_dict(
         'button': 'bg: Black'
     }
 )
-
-app = Application(full_screen=True)
-app.run()
 
 
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
@@ -247,7 +247,7 @@ while session_ended == False:
     try:
         prompt = pt_prompt("""
     
->>> """, style=style, cursor=CursorShape.BLINKING_UNDERLINE)
+>>> """, style=style, cursor=CursorShape.BLINKING_UNDERLINE, completer=command_completer)
 
         if prompt == '/quit':
             session_ended = True
