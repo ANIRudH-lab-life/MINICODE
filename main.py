@@ -28,7 +28,7 @@ style = Style.from_dict(
         "": "Peru",
         'dialog': 'bg:Black',
         'dialog frame.label': 'bg:Black #000000',
-        'dialog.body': 'bg:Black Black',
+        'dialog.body': 'bg:Black Peru',
         'dialog shadow': 'bg: Black',
         'button': 'bg: Black'
     }
@@ -47,18 +47,18 @@ load_dotenv()
 memory = []
 
 message_dialog(
-    title='WELCOME',
+    title='WELCOME TO',
     text=HTML(r"""
 
-⠀⠀⠀⠀⠀⠀⠀⢀⡖⣲⣄⣀⣀⣔⡲⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠈⡎⠁⠀⠀⠀⠀⠹⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⣴⠃⠘⣣⣶⣶⠃⠀⢳⠀⠀⡴⠶⢤⠀⢀⡴⠶⣦⢠⠶⠶⣦⣴⠶⢦⠀⠀⢠⠶⢦⣠⠶⠶⣦⠀⣠⠶⠶⠶⠶⣄⠀⣠⠶⠶⠶⠶⣄⠀⢠⠶⠶⠶⠶⣄⠀⢠⠶⠶⠶⠶⠶⡄⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⢠⠟⠷⢦⠍⠉⠉⠤⠶⡇⠀⠀⡇⠀⠈⠷⠞⠁⠀⣽⠘⡆⢰⠋⣿⠀⠈⠳⡀⢸⠀⢸⠙⡆⠠⡏⢰⠋⣠⠖⠒⣦⣼⣶⠁⢠⡶⠶⢤⠈⣷⣾⠀⣴⠒⢦⠈⢣⣸⠀⣰⣒⠒⠒⠁⠀⠀⠀
-⠀⠀⠀⠀⠀⡰⠋⠀⣄⠀⠀⡀⠀⠀⠀⢳⡀⠀⡇⠀⡶⣄⣠⢶⠀⣾⠀⡇⢸⠀⣿⠀⢰⣆⠹⣽⠂⢸⠀⡇⠀⡇⢸⠰⣿⠀⠀⠀⠀⢸⠀⢸⠀⠀⢸⠀⣿⣿⠀⡇⠀⢸⠀⢸⢻⠀⢈⣉⣉⡇⠀⠀⠀⠀
-⠀⠀⠀⢠⠞⠀⣸⢿⣻⡀⠀⢳⡴⠀⠀⡿⢷⣤⡇⠀⡇⠈⠁⣸⠀⢿⣀⡇⢸⣀⣿⠀⢸⠈⢧⠈⠀⢸⢀⡇⠀⣇⠺⡀⠻⠤⠤⠖⢲⠾⡀⠘⠦⠤⠞⢀⡿⢿⠀⠧⠤⠞⢀⡸⢸⠄⠸⠥⠤⠤⡀⠀⠀⠀
-⠀⠀⠀⠘⣤⢸⣥⣤⡏⣧⣤⣼⡇⣤⣼⣥⣤⡟⠧⠤⠇⠀⠀⠳⠤⠼⠻⠤⠤⠟⠻⠤⠼⠀⠀⠳⠤⠼⠸⠤⠤⠞⠀⠙⠦⠤⠤⠤⠋⠀⠙⠦⠤⠤⠤⠎⠀⠸⠤⠤⠤⠤⠞⠀⠸⠤⠤⠤⠤⠤⠃⠀⠀⠀
-⠀⠀⠀⠀⠀⠉⠉⠉⠈⠉⠉⠉⠉⠉⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                                            
+                                    ⠀⠀⠀⠀⠀⠀⠀⢀⡖⣲⣄⣀⣀⣔⡲⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⠀⠀⠈⡎⠁⠀⠀⠀⠀⠹⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⠀⠀⣴⠃⠘⣣⣶⣶⠃⠀⢳⠀⠀⡴⠶⢤⠀⢀⡴⠶⣦⢠⠶⠶⣦⣴⠶⢦⠀⠀⢠⠶⢦⣠⠶⠶⣦⠀⣠⠶⠶⠶⠶⣄⠀⣠⠶⠶⠶⠶⣄⠀⢠⠶⠶⠶⠶⣄⠀⢠⠶⠶⠶⠶⠶⡄⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⠀⢠⠟⠷⢦⠍⠉⠉⠤⠶⡇⠀⠀⡇⠀⠈⠷⠞⠁⠀⣽⠘⡆⢰⠋⣿⠀⠈⠳⡀⢸⠀⢸⠙⡆⠠⡏⢰⠋⣠⠖⠒⣦⣼⣶⠁⢠⡶⠶⢤⠈⣷⣾⠀⣴⠒⢦⠈⢣⣸⠀⣰⣒⠒⠒⠁⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⡰⠋⠀⣄⠀⠀⡀⠀⠀⠀⢳⡀⠀⡇⠀⡶⣄⣠⢶⠀⣾⠀⡇⢸⠀⣿⠀⢰⣆⠹⣽⠂⢸⠀⡇⠀⡇⢸⠰⣿⠀⠀⠀⠀⢸⠀⢸⠀⠀⢸⠀⣿⣿⠀⡇⠀⢸⠀⢸⢻⠀⢈⣉⣉⡇⠀⠀⠀⠀
+                                    ⠀⠀⠀⢠⠞⠀⣸⢿⣻⡀⠀⢳⡴⠀⠀⡿⢷⣤⡇⠀⡇⠈⠁⣸⠀⢿⣀⡇⢸⣀⣿⠀⢸⠈⢧⠈⠀⢸⢀⡇⠀⣇⠺⡀⠻⠤⠤⠖⢲⠾⡀⠘⠦⠤⠞⢀⡿⢿⠀⠧⠤⠞⢀⡸⢸⠄⠸⠥⠤⠤⡀⠀⠀⠀
+                                    ⠀⠀⠀⠘⣤⢸⣥⣤⡏⣧⣤⣼⡇⣤⣼⣥⣤⡟⠧⠤⠇⠀⠀⠳⠤⠼⠻⠤⠤⠟⠻⠤⠼⠀⠀⠳⠤⠼⠸⠤⠤⠞⠀⠙⠦⠤⠤⠤⠋⠀⠙⠦⠤⠤⠤⠎⠀⠸⠤⠤⠤⠤⠞⠀⠸⠤⠤⠤⠤⠤⠃⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⠉⠉⠉⠈⠉⠉⠉⠉⠉⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                                                                
 """),
 style=style).run()
 
@@ -91,6 +91,9 @@ You Are on a linux environment
 
 the current date is {datetime.now()}
 
+#Must do
+
+For all coding tasks search how to do it, dont rely on your knowledge, YOU ARE DUMB. THE WEB WILL TEACH YOU. Search about everything, ALWAYS.
 
 """
 memory.append({"role": "system", "content": system_prompt})
@@ -107,7 +110,7 @@ def run_command(command):
         style=style,
         title='Yes/No dialog example',
         text=HTML(f"""
-<aaa bg="Beige" fg="Black">The command {command} will be called</aaa>
+<style bg="Beige" fg="Black">The command {command} will be called</style>
     
 """)).run()
     if result_yes_no == True:
@@ -123,7 +126,7 @@ def run_command(command):
 
 def web_search(query):
     print(HTML(f"""
-<aaa bg="Beige" fg="Black">  The query {query} was called</aaa>
+<style bg="Beige" fg="Black">  The query {query} was called</style>
 
 """))
 
@@ -152,7 +155,7 @@ def write_file(path, content):
         style=style,
         title='Yes/No dialog example',
         text=HTML(f"""
-<aaa bg="Beige" fg="Black">The file {path} will be edited with this code {content}</aaa>
+<style bg="Beige" fg="Black">The file {path} will be edited with this code {content}</style>
 
 """)).run()
 
@@ -331,7 +334,8 @@ while session_ended == False:
             delta = choice.delta
 
             if delta.content:
-                
+                content_printed=True
+                print(HTML(f"<Peru><i>{escape(delta.content)}</i></Peru>"), end="", flush=True)
                 full_content += delta.content
 
             if hasattr(delta, 'reasoning') and delta.reasoning:
@@ -385,7 +389,7 @@ while session_ended == False:
 
                 elif name == "finish":
                     final_answer = args.get("finalAnswer", "")
-                    print(HTML(f'<aaa fg="Moccasin">\n{final_answer}</aaa>'))
+                    print(HTML(f'<style fg="Moccasin">\n{escape(final_answer)}</style>'))
                     agent_finished = True
                     memory.append({"role": "tool", "tool_call_id": str(tool_call.id), "content": "task completed successfully"})
                     break
@@ -398,7 +402,10 @@ while session_ended == False:
             agent_finished = True
 
     if reply.content:
-        print(HTML(f'<aaa fg="Moccasin">\n {reply.content}</aaa>'))
+        if content_printed == True:
+            continue
+        else:
+            print(HTML(f'<style fg="Moccasin">\n {escape(reply.content)}</style>'))
 
 
 sys.exit()
