@@ -17,8 +17,21 @@ from prompt_toolkit.cursor_shapes import CursorShape, ModalCursorShapeConfig
 from prompt_toolkit.shortcuts import yes_no_dialog
 from prompt_toolkit.shortcuts import message_dialog
 from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.completion import Completer, Completion
 
-command_completer = WordCompleter(["/memory", "/quit"])
+COMMANDS = ["/memory", "/quit"]
+
+class SlashCompleter(Completer):
+    def get_completions(self, document, complete_event):
+        text = document.text_before_cursor
+
+        if text.startswith("/"):
+            for command in COMMANDS:
+                if command.startswith(text):
+                    yield Completion(
+                        command,
+                        start_position=-len(text)
+                    )
 
 c_or_t=None
 
@@ -265,7 +278,7 @@ while session_ended == False:
     try:
         prompt = pt_prompt("""
     
->>> """, style=style, cursor=CursorShape.BLINKING_UNDERLINE, completer=command_completer)
+>>> """, style=style, cursor=CursorShape.BLINKING_UNDERLINE, completer=SlashCompleter)
 
         if prompt == '/quit':
             session_ended = True
