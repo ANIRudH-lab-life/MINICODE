@@ -289,7 +289,8 @@ while session_ended == False:
             subprocess.run(["bash", os.path.expanduser("~/.local/share/minicode/setup.sh")])
             message_dialog(
                 title = "Update Finished",
-                text = "Update successfully completed"
+                text = "Update successfully completed",
+                style= style
             ).run()
             updated = True
 
