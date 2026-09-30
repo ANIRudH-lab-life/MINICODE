@@ -22,7 +22,7 @@ from prompt_toolkit.completion import Completer, Completion
 COMMANDS = ["/memory", "/quit"]
 
 class SlashCompleter(Completer):
-    def get_completions(self, document, complete_event):
+    async def get_completions_aysnc(self, document, complete_event):
         text = document.text_before_cursor
 
         if text.startswith("/"):
