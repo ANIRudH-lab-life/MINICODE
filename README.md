@@ -4,6 +4,8 @@ MINICODE is a terminal coding agent designed for small language models, especial
 
 The default configuration uses Ollama with `qwen3:1.7b`, a small local model in the intended size range.
 
+It is always in its provided directory so you dont have to worry about it removing all of your file in the current directory
+
 ## Requirements
 
 - Python 3
