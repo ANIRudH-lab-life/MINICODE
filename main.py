@@ -281,7 +281,7 @@ while session_ended == False:
     
 >>> """, style=style, cursor=CursorShape.BLINKING_UNDERLINE, completer=SlashCompleter(), complete_while_typing=True)
         if prompt == '/update':
-            subprocess.run(["~/.local/share/minicode/setup.sh"])
+            subprocess.run(["bash", os.path.expanduser("~/.local/share/minicode/setup.sh")])
             message_dialog(
                 title = "Update Finished",
                 text = "Update succesfully completed"
