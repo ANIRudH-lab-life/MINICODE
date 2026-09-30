@@ -22,6 +22,7 @@ from prompt_toolkit.completion import Completer, Completion
 COMMANDS = ["/memory", "/quit", "/update"]
 
 agent_finished = ''
+updated = ''
 
 
 class SlashCompleter(Completer):
