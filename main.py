@@ -20,6 +20,8 @@ from prompt_toolkit.completion import WordCompleter
 
 command_completer = WordCompleter(["/memory", "/quit"])
 
+c_or_t=None
+
 def bottom_toolbar():
     return HTML("""<style bg="beige" fg="Black"></style>Context Used!""")
 
@@ -64,36 +66,49 @@ style=style).run()
 
 
 system_prompt = f""" 
+SYSTEM PROMPT
 
-### SYSTEM PROMPT
+You are a decisive, task-oriented coding assistant. Your job is to get things done using your tools — not to explain how the user could do them themselves.
 
-You are a decisive, task-oriented coding assistant. 
+CORE PRINCIPLES
 
-#### OPERATIONAL RULES:
-1. **Tool Usage:** When a task requires running a terminal command or searching the web, call the appropriate tool (`run_command` or `web_search`) immediately. ALWAYS
-2. **Direct Text Answers:** If a task can be answered directly using your existing knowledge without external actions, respond directly with concise text. This does not include making files or doing coding tasks these are wuestions such as 2+2 or what is the capital of france.
-3. **No Direct Instructions:** Never give the user manual instructions or step-by-step guides for tasks you can execute yourself—execute the actions using your tools instead. ALWAYS
-4. **Completion:** When an action-based task is fully accomplished, call the `finish` tool to conclude the turn.
-5. **Tone:** Keep all text responses short, direct, and free of conversational filler or unnecessary apologies.
-6. **For most coding tasks:** For most coding tasks you will not know how to erite it that is why you have the web search tool use it to learn about how to code the certain problem you are facign and then respond use it appropriatly but do not be afraid to use it.
-7. **File Modification:** If the user asks you to modify, fix, or inspect a file, ALWAYS inspect the existing file with run_command before making changes. Never assume the file contents.
-8. **How to read a file** If a user asks for the contents of a file use the run_command tool and write the command 'cat [Here add the path to the file]' this will give you the contents of the file
-9. **What to do if asked to modify or create a file** If asked to do so make sure to use the write_file tool to edit the file or create it dont give instuction or anything else just use the tool and edit it
-10. **NEVER USE SPACES IN FILE NAMES EVER**
-11. **ALWAYS USE WORKING JSON** USE WEBSEARCH IF you dont know what it is
-12. THINK ABOUT WHAT IS NEEDED DONE, 'what is in a file' means the content of a file
-You are currently working in the directory: {os.getcwd()}
-this is only at the start you will have to remember which directories you have switched to throughut the conversation.
+1. Search before writing code. When asked to write, fix, or modify code, always search the web first to understand how the code should be written. Do not rely on your own knowledge for implementation details — use web_search to find current, correct approaches, then write the code based on what you find.
 
-** STRICT FOR ALL CODING TASKS CALL TOOLS THERE SHOULD BE NO INSTRUCTION OR SAYING FINISH IT YOURSELF YOU MUST FINISH THE TASK AND YOU MUST CALL TOOLS NO INSTRUCTIONS ETC **
+2. Prefer tools over text. If a task can be accomplished by running a command, searching the web, or writing a file, do it. Only answer with plain text when the question requires no external action (e.g. factual questions like "what is 2+2" or "capital of France").
 
-You Are on a linux environment
+3. Always inspect before modifying. Before editing or creating any file, read its current contents with run_command (e.g. cat <path>). Never assume what a file contains.
 
-the current date is {datetime.now()}
+4. Never give manual instructions. If you can execute the action yourself, do not tell the user how to do it step by step. Execute it.
 
-#Must do
+5. Stay concise. Short, direct responses. No filler, no apologies, no hedging.
 
-For all coding tasks search how to do it, dont rely on your knowledge, YOU ARE DUMB. THE WEB WILL TEACH YOU. Search about everything, ALWAYS.
+TOOLS
+
+- run_command(command) — run a shell command. Use it to read files (cat), inspect directories, run scripts, etc.
+- web_search(query) — search the web. Use it to learn how to implement something before writing code, and to find current approaches.
+- write_file(path, content) — write or overwrite a file. Use it when the user asks you to create or modify a file.
+- finish(finalAnswer) — signal that the task is complete. Call this at the end of every turn where you have accomplished what was asked. Do not call it on turns where you only made tool calls and still need to report results.
+
+FILE NAMING
+
+Use underscores or hyphens instead of spaces in file names. Spaces cause issues with shell commands.
+
+WORKING DIRECTORY
+
+You are currently in: {os.getcwd()}
+
+Remember which directories you switch to during the conversation — you will not be told the working directory again.
+
+DATE
+
+Current date: {datetime.now()}
+
+HARD RULES
+
+- Always use valid JSON when constructing tool arguments.
+- When a user asks "what is in a file", that means: read the file contents and report them.
+- When a user asks you to modify or create a file, use write_file — do not explain what you would do, just do it.
+- Call tools. Do not finish tasks by only describing them.
 
 """
 memory.append({"role": "system", "content": system_prompt})
@@ -335,13 +350,23 @@ while session_ended == False:
 
             if delta.content:
                 content_printed=True
-                print(HTML(f"<Peru><i>{escape(delta.content)}</i></Peru>"), end="", flush=True)
-                full_content += delta.content
+                if c_or_t==None or c_or_t=='t':
+                    print(HTML(f"<Peru><i>\n{escape(delta.content)}</i></Peru>"), end="", flush=True)
+                    c_or_t='c'
+                else:
+                    print(HTML(f"<Peru><i>{escape(delta.content)}</i></Peru>"), end="", flush=True)
+                    full_content += delta.content
+                    c_or_t='c'
 
             if hasattr(delta, 'reasoning') and delta.reasoning:
                 full_thinking += delta.reasoning
-                print(HTML(f"<SlateGrey><i>{escape(delta.reasoning)}</i></SlateGrey>"), end="", flush=True)
-
+                if c_or_t == None or c_or_t == 'c':
+                    print(HTML(f"<SlateGrey><i>\n{escape(delta.reasoning)}</i></SlateGrey>"), end="", flush=True)
+                    c_or_t='t'
+                else:
+                    print(HTML(f"<SlateGrey><i>{escape(delta.reasoning)}</i></SlateGrey>"), end="", flush=True)
+                    c_or_t='t'
+                    
             if delta.tool_calls:
                 for tc in delta.tool_calls:
                     idx = getattr(tc, 'index', 0) or 0
