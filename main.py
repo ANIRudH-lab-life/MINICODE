@@ -26,6 +26,9 @@ class SlashCompleter(Completer):
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
 
+        if not text.startswith("/"):
+            return
+
         if text.startswith("/"):
             for command in COMMANDS:
                 if command.startswith(text):
