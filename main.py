@@ -21,6 +21,8 @@ from prompt_toolkit.completion import Completer, Completion
 
 COMMANDS = ["/memory", "/quit", "/update"]
 
+agent_finished = ''
+
 
 class SlashCompleter(Completer):
     def get_completions(self, document, complete_event):
