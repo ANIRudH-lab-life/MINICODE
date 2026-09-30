@@ -289,7 +289,7 @@ while session_ended == False:
                 title = "Update Finished",
                 text = "Update successfully completed"
             ).run()
-            agent_finished = True
+            updated = True
 
         if prompt == '/quit':
             session_ended = True
@@ -352,7 +352,10 @@ while session_ended == False:
     
     memory.append({"role": "user", "content": prompt})
 
-    agent_finished = False
+    if updated == True:
+        agent_finished == True
+    else:
+        agent_finished = False
 
 
     while agent_finished == False:
