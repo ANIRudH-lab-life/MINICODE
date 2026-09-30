@@ -65,6 +65,7 @@ Place `TAVILY_API_KEY=your_key` in a `.env` file in the project directory, or ex
 
 - `/memory`: save the current conversation as a timestamped JSON transcript, then choose a transcript file to load.
 - `/quit`: end the session.
+- `/update`: updates minicode
 - `Ctrl+C`: save the current conversation and exit.
 
 ## Safety Prompts

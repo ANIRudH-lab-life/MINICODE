@@ -19,7 +19,7 @@ from prompt_toolkit.shortcuts import message_dialog
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.completion import Completer, Completion
 
-COMMANDS = ["/memory", "/quit"]
+COMMANDS = ["/memory", "/quit", "/update"]
 
 
 class SlashCompleter(Completer):
@@ -280,6 +280,13 @@ while session_ended == False:
         prompt = pt_prompt("""
     
 >>> """, style=style, cursor=CursorShape.BLINKING_UNDERLINE, completer=SlashCompleter(), complete_while_typing=True)
+        if prompt == '/update':
+            subprocess.run(["~/.local/share/minicode/setup.sh"])
+            message_dialog(
+                title = "Update Finished",
+                text = "Update succesfully completed"
+            )
+            
 
         if prompt == '/quit':
             session_ended = True
