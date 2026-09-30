@@ -21,6 +21,7 @@ from prompt_toolkit.completion import Completer, Completion
 
 COMMANDS = ["/memory", "/quit"]
 
+
 class SlashCompleter(Completer):
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
@@ -278,7 +279,7 @@ while session_ended == False:
     try:
         prompt = pt_prompt("""
     
->>> """, style=style, cursor=CursorShape.BLINKING_UNDERLINE, completer=SlashCompleter())
+>>> """, style=style, cursor=CursorShape.BLINKING_UNDERLINE, completer=SlashCompleter(), complete_while_typing=True)
 
         if prompt == '/quit':
             session_ended = True
