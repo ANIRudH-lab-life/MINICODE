@@ -144,10 +144,7 @@ def run_command(command):
     result_yes_no=yes_no_dialog(
         style=style,
         title='Yes/No dialog example',
-        text=HTML(f"""
-<style bg="Beige" fg="Black">The command {command} will be called</style>
-    
-""")).run()
+        text=HTML(f"""<style bg="Beige" fg="Black">The command {command} will be called</style>""")).run()
     if result_yes_no == True:
         result = subprocess.run(command, shell = True, capture_output = True, text = True)
         return json.dumps({
