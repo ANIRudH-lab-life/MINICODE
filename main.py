@@ -455,11 +455,5 @@ while session_ended == False:
             
             agent_finished = True
 
-    if reply.content:
-        if content_printed == True:
-            continue
-        else:
-            print(HTML(f'<style fg="Moccasin">\n {escape(reply.content)}</style>'))
-
 
 sys.exit()
