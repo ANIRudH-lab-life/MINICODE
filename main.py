@@ -157,10 +157,7 @@ def run_command(command):
 
 
 def web_search(query):
-    print(HTML(f"""
-<style bg="Beige" fg="Black">  The query {query} was called</style>
-
-"""))
+    print(HTML(f"""<style bg="Beige" fg="Black">  The query {query} was called</style>"""))
 
     api_key = os.environ.get("TAVILY_API_KEY")
     web_results = requests.post(
@@ -186,10 +183,7 @@ def write_file(path, content):
     result_yes_no = yes_no_dialog(
         style=style,
         title='Yes/No dialog example',
-        text=HTML(f"""
-<style bg="Beige" fg="Black">The file {path} will be edited with this code {content}</style>
-
-""")).run()
+        text=HTML(f"""<style bg="Beige" fg="Black">The file {path} will be edited with this code {content}</style>""")).run()
 
     if result_yes_no == True:
         try:
@@ -361,98 +355,101 @@ while session_ended == False:
 
     while agent_finished == False:
 
-        response = client.chat.completions.create(
-            model = model,
-            messages = memory,
-            tools = tools,
-            stream = True
-        )
+        try:
+            response = client.chat.completions.create(
+                model = model,
+                messages = memory,
+                tools = tools,
+                stream = True
+            )
 
-        full_content = ""
-        full_thinking = ""
-        full_tool_calls = []
+            full_content = ""
+            full_thinking = ""
+            full_tool_calls = []
 
-        for chunk in response:
-            choice = chunk.choices[0]
-            delta = choice.delta
+            for chunk in response:
+                choice = chunk.choices[0]
+                delta = choice.delta
 
-            if delta.content:
-                content_printed=True
-                if c_or_t==None or c_or_t=='t':
-                    print(HTML(f"<Peru><i>\n{escape(delta.content)}</i></Peru>"), end="", flush=True)
-                    c_or_t='c'
-                else:
-                    print(HTML(f"<Peru><i>{escape(delta.content)}</i></Peru>"), end="", flush=True)
-                    full_content += delta.content
-                    c_or_t='c'
-
-            if hasattr(delta, 'reasoning') and delta.reasoning:
-                full_thinking += delta.reasoning
-                if c_or_t == None or c_or_t == 'c':
-                    print(HTML(f"<SlateGrey><i>\n{escape(delta.reasoning)}</i></SlateGrey>"), end="", flush=True)
-                    c_or_t='t'
-                else:
-                    print(HTML(f"<SlateGrey><i>{escape(delta.reasoning)}</i></SlateGrey>"), end="", flush=True)
-                    c_or_t='t'
-                    
-            if delta.tool_calls:
-                for tc in delta.tool_calls:
-                    idx = getattr(tc, 'index', 0) or 0
-                    while len(full_tool_calls) <= idx:
-                        full_tool_calls.append(None)
-                    if full_tool_calls[idx] is None:
-                        if hasattr(tc, 'function'):
-                            full_tool_calls[idx] = type(tc)(index=idx, function=tc.function)
-                        else:
-                            full_tool_calls[idx] = type(tc)(index=idx)
+                if delta.content:
+                    content_printed=True
+                    if c_or_t==None or c_or_t=='t':
+                        print(HTML(f"<Peru><i>\n{escape(delta.content)}</i></Peru>"), end="", flush=True)
+                        c_or_t='c'
                     else:
-                        if tc.function:
-                            if tc.function.name:
-                                full_tool_calls[idx].function.name = tc.function.name
-                            if tc.function.arguments:
-                                full_tool_calls[idx].function.arguments += tc.function.arguments
+                        print(HTML(f"<Peru><i>{escape(delta.content)}</i></Peru>"), end="", flush=True)
+                        full_content += delta.content
+                        c_or_t='c'
 
-            if choice.finish_reason:
-                print()
-                break
+                if hasattr(delta, 'reasoning') and delta.reasoning:
+                    full_thinking += delta.reasoning
+                    if c_or_t == None or c_or_t == 'c':
+                        print(HTML(f"<SlateGrey><i>\n{escape(delta.reasoning)}</i></SlateGrey>"), end="", flush=True)
+                        c_or_t='t'
+                    else:
+                        print(HTML(f"<SlateGrey><i>{escape(delta.reasoning)}</i></SlateGrey>"), end="", flush=True)
+                        c_or_t='t'
+                        
+                if delta.tool_calls:
+                    for tc in delta.tool_calls:
+                        idx = getattr(tc, 'index', 0) or 0
+                        while len(full_tool_calls) <= idx:
+                            full_tool_calls.append(None)
+                        if full_tool_calls[idx] is None:
+                            if hasattr(tc, 'function'):
+                                full_tool_calls[idx] = type(tc)(index=idx, function=tc.function)
+                            else:
+                                full_tool_calls[idx] = type(tc)(index=idx)
+                        else:
+                            if tc.function:
+                                if tc.function.name:
+                                    full_tool_calls[idx].function.name = tc.function.name
+                                if tc.function.arguments:
+                                    full_tool_calls[idx].function.arguments += tc.function.arguments
 
-        reply = ChatCompletionMessage(role="assistant", content=full_content or None)
-        if full_tool_calls:
-            reply.tool_calls = full_tool_calls
-
-        memory.append({"role": "assistant", "content": full_content or "", "tool_calls": full_tool_calls if full_tool_calls else None})
-
-        if reply.tool_calls:
-            for tool_call in reply.tool_calls:
-                name = tool_call.function.name
-                try:
-                    args = json.loads(tool_call.function.arguments)
-                except (json.JSONDecodeError, TypeError):
-                    args = {}
-
-                if name == "run_command":
-                    output = run_command(**args)
-                    memory.append({"role": "tool", "tool_call_id": str(tool_call.id), "content": output})
-
-                elif name == "web_search":
-                    output = web_search(**args)
-                    output = web_search_trimmer(output)
-                    output = json.dumps(output)
-                    memory.append({"role": "tool", "tool_call_id": str(tool_call.id), "content": output})
-
-                elif name == "finish":
-                    final_answer = args.get("finalAnswer", "")
-                    print(HTML(f'<style fg="Moccasin">\n{escape(final_answer)}</style>'))
-                    agent_finished = True
-                    memory.append({"role": "tool", "tool_call_id": str(tool_call.id), "content": "task completed successfully"})
+                if choice.finish_reason:
+                    print()
                     break
-                elif name == "write_file":
-                    success = write_file(**args)
-                    memory.append({"role": "tool", "tool_call_id": str(tool_call.id), "content": json.dumps({"success": success["success"], "path": success["resolved_path"]})})
-                
-        else:
-            
-            agent_finished = True
 
+            reply = ChatCompletionMessage(role="assistant", content=full_content or None)
+            if full_tool_calls:
+                reply.tool_calls = full_tool_calls
+
+            memory.append({"role": "assistant", "content": full_content or "", "tool_calls": full_tool_calls if full_tool_calls else None})
+
+            if reply.tool_calls:
+                for tool_call in reply.tool_calls:
+                    name = tool_call.function.name
+                    try:
+                        args = json.loads(tool_call.function.arguments)
+                    except (json.JSONDecodeError, TypeError):
+                        args = {}
+
+                    if name == "run_command":
+                        output = run_command(**args)
+                        memory.append({"role": "tool", "tool_call_id": str(tool_call.id), "content": output})
+
+                    elif name == "web_search":
+                        output = web_search(**args)
+                        output = web_search_trimmer(output)
+                        output = json.dumps(output)
+                        memory.append({"role": "tool", "tool_call_id": str(tool_call.id), "content": output})
+
+                    elif name == "finish":
+                        final_answer = args.get("finalAnswer", "")
+                        print(HTML(f'<style fg="Moccasin">\n{escape(final_answer)}</style>'))
+                        agent_finished = True
+                        memory.append({"role": "tool", "tool_call_id": str(tool_call.id), "content": "task completed successfully"})
+                        break
+                    elif name == "write_file":
+                        success = write_file(**args)
+                        memory.append({"role": "tool", "tool_call_id": str(tool_call.id), "content": json.dumps({"success": success["success"], "path": success["resolved_path"]})})
+                    
+            else:
+                
+                agent_finished = True
+        except KeyboardInterrupt:
+            agent_finished = True
+        
 
 sys.exit()
