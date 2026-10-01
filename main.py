@@ -16,7 +16,6 @@ from prompt_toolkit.styles import Style
 from prompt_toolkit.cursor_shapes import CursorShape, ModalCursorShapeConfig
 from prompt_toolkit.shortcuts import yes_no_dialog
 from prompt_toolkit.shortcuts import message_dialog
-from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.completion import Completer, Completion
 
 COMMANDS = ["/memory", "/quit", "/update"]

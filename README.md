@@ -18,7 +18,7 @@ It is always in its provided directory so you dont have to worry about it removi
 The installer clones the project, creates a virtual environment, installs dependencies, downloads the default Ollama model, and exposes a `minicode` command.
 
 ```bash
-./setup.sh
+curl -fsSL https://raw.githubusercontent.com/ANIRudH-lab-life/MINICODE/main/install.sh | bash
 ```
 
 By default, MINICODE is installed in `~/.local/share/minicode` and the launcher is linked to `~/.local/bin/minicode`. Add that directory to `PATH` if the installer reports that it is missing.
