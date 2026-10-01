@@ -8,6 +8,7 @@ def setup():
     base_url = pt_prompt("Base_Url of provider: ")
     model = pt_prompt("Model name in provider database: ")
     api_key= pt_prompt("API key of provider, if none just click enter", is_password=True)
+    Tavily_api = pt_prompt("API key of Tavily (its free get it now!): ", is_password=True)
 
     if api_key == '':
         api_key = 'ollama'
@@ -22,6 +23,9 @@ def setup():
     with open("config.json", "w") as f:
         json.dump(config, f, indent=4)
 
+    with open(".env", "w") as f:
+        print(f"TAVILY_API_KEY={Tavily_api}", file=f)
+    
     print("Config has been set if you ever need to change it run minicode --setup again!!!")
 
 def main():

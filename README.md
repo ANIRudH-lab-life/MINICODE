@@ -11,7 +11,6 @@ It is always in its provided directory so you dont have to worry about it removi
 - Python 3
 - An OpenAI-compatible chat-completions provider, such as Ollama
 - `git` and Ollama when using the installer
-- A `TAVILY_API_KEY` environment variable to enable web search
 
 ## Install
 
@@ -59,9 +58,11 @@ Provider settings live in `config.json`:
 }
 ```
 
+Tavily api key is handled in a .env which is created with minicode --setup
+
 Use `minicode --setup` to rewrite these values. For providers without an API key, leave the API-key prompt blank; MINICODE uses `ollama` as a placeholder.
 
-Place `TAVILY_API_KEY=your_key` in a `.env` file in the project directory, or export it in the shell, before asking the agent to search the web.
+
 
 ## In-session Commands
 
