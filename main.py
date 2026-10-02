@@ -284,7 +284,7 @@ while session_ended == False:
                 style= style
             ).run()
             updated = True
-            
+            sys.exit()
 
         if prompt == '/quit':
             session_ended = True
