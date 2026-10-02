@@ -182,7 +182,7 @@ def write_file(path, content):
     result_yes_no = yes_no_dialog(
         style=style,
         title='Yes/No dialog example',
-        text=HTML(f"""<style bg="Beige" fg="Black">The file {path} will be edited with this code {content}</style>""")).run()
+        text=HTML(f"""<style bg="Beige" fg="Black">The file {path} will be edited with code</style>""")).run()
 
     if result_yes_no == True:
         try:
