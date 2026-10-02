@@ -276,51 +276,61 @@ while session_ended == False:
         prompt = pt_prompt("""
     
 >>> """, style=style, cursor=CursorShape.BLINKING_UNDERLINE, completer=SlashCompleter(), complete_while_typing=True)
-        if prompt == '/update':
-            subprocess.run(["bash", os.path.expanduser("~/.local/share/minicode/setup.sh")])
-            message_dialog(
-                title = "Update Finished",
-                text = "Update successfully completed re-run minicode for changes to take effect",
-                style= style
-            ).run()
-            updated = True
-            sys.exit()
 
-        if prompt == '/quit':
-            session_ended = True
-            break
-        elif prompt == '/memory':
-            now = datetime.now().strftime("%Y%m%d_%H%M%S")
-            title = f"minicode_{now}.md"
-            clean_memory = []
-            for msg in memory:
-                clean_msg = {
-                    "role": msg.get("role", ""),
-                    "content": msg.get("content", "")
-                }
-                if "tool_calls" in msg and msg["tool_calls"]:
-                    clean_msg["tool_calls"] = str(msg["tool_calls"])
-                if "tool_call_id" in msg:
-                    clean_msg["tool_call_id"] = msg.get("tool_call_id", "")
-                clean_memory.append(clean_msg)
-            with open(title, 'w') as z:
-                json.dump(clean_memory,z, indent = 2)
-            memory_retrive = pt_prompt("type in the .md file name ")
-            z = open(memory_retrive, 'r')
-            loaded_memory = json.load(z)
-            memory.clear()
-            # Filter out tool_calls when loading - can't reconstruct them properly
-            for msg in loaded_memory:
-                clean_msg = {
-                    "role": msg.get("role", ""),
-                    "content": msg.get("content", "")
-                }
-                if msg.get("role") == "tool":
-                    clean_msg["tool_call_id"] = msg.get("tool_call_id", "")
-                memory.append(clean_msg)
-            used_old_session = True
-# use memory_retrive as the name of the session
-            continue
+        prompt_split = prompt.split()
+        
+        
+        prompt_split_0 = list(prompt_split[0])
+
+        if prompt_split_0[0] == '/':
+            if prompt == '/update':
+                subprocess.run(["bash", os.path.expanduser("~/.local/share/minicode/setup.sh")])
+                message_dialog(
+                    title = "Update Finished",
+                    text = "Update successfully completed re-run minicode for changes to take effect",
+                    style= style
+                ).run()
+                updated = True
+                sys.exit()
+            
+            if prompt == '/quit':
+                session_ended = True
+                break
+            elif prompt == '/memory':
+                now = datetime.now().strftime("%Y%m%d_%H%M%S")
+                title = f"minicode_{now}.md"
+                clean_memory = []
+                for msg in memory:
+                    clean_msg = {
+                        "role": msg.get("role", ""),
+                        "content": msg.get("content", "")
+                    }
+                    if "tool_calls" in msg and msg["tool_calls"]:
+                        clean_msg["tool_calls"] = str(msg["tool_calls"])
+                    if "tool_call_id" in msg:
+                        clean_msg["tool_call_id"] = msg.get("tool_call_id", "")
+                    clean_memory.append(clean_msg)
+                with open(title, 'w') as z:
+                    json.dump(clean_memory,z, indent = 2)
+                memory_retrive = pt_prompt("type in the .md file name ")
+                z = open(memory_retrive, 'r')
+                loaded_memory = json.load(z)
+                memory.clear()
+                # Filter out tool_calls when loading - can't reconstruct them properly
+                for msg in loaded_memory:
+                    clean_msg = {
+                        "role": msg.get("role", ""),
+                        "content": msg.get("content", "")
+                    }
+                    if msg.get("role") == "tool":
+                        clean_msg["tool_call_id"] = msg.get("tool_call_id", "")
+                    memory.append(clean_msg)
+                used_old_session = True
+            # use memory_retrive as the name of the session
+                continue
+            else:
+                print(HTML(f'<style fg="Moccasin">Sorry this command does not exist</style>'))
+                agent_finished = True
 
     except KeyboardInterrupt:
         # Sanitize memory for JSON serialization before saving
